@@ -1,43 +1,57 @@
 package com.backend.huertohogarbackend.service;
 
-import com.backend.huertohogarbackend.model.ERole;
-import com.backend.huertohogarbackend.model.Role;
 import com.backend.huertohogarbackend.model.User;
-import com.backend.huertohogarbackend.repository.RoleRepository;
 import com.backend.huertohogarbackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private RoleRepository roleRepository;
 
-    public User register(String email, String password, String address, String phoneNumber) {
-        Set<Role> roles = new HashSet<>();
-        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-        roles.add(userRole);
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
 
-        User user = User.builder()
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .Address(address)
-                .phoneNumber(phoneNumber)
-                .roles(roles)
-                .build();
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public User register(User user) {
+        // Asegurarse de encriptar la contraseña antes de guardar
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
-    public Optional<User> findByUsername(String email) {
-        return userRepository.findByEmail(email);
+
+    public Optional<User> update(Long id, User userDetails) {
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setUsername(userDetails.getUsername());
+                    user.setEmail(userDetails.getEmail());
+                    user.setRole(userDetails.getRole());
+                    // Opcional: permitir cambiar la contraseña si se proporciona una nueva
+                    if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+                        user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+                    }
+                    return userRepository.save(user);
+                });
+    }
+
+    public boolean delete(Long id) {
+        return userRepository.findById(id)
+                .map(user -> {
+                    userRepository.delete(user);
+                    return true;
+                })
+                .orElse(false);
     }
 }
