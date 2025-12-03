@@ -1,4 +1,4 @@
-package com.example.demo.security.jwt;
+package com.backend.huertohogarbackend.security.jwt;
 
 import javax.crypto.SecretKey;
 import io.jsonwebtoken.security.Keys;
@@ -28,12 +28,16 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+        try {
+            return Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public boolean isTokenValid(String token) {

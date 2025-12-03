@@ -1,7 +1,7 @@
-package com.example.demo.security.filter;
+package com.backend.huertohogarbackend.security.filter;
 
-import com.example.demo.service.CustomUserDetailsService;
-import com.example.demo.security.jwt.JwtService;
+import com.backend.huertohogarbackend.service.CustomUserDetailsService;
+import com.backend.huertohogarbackend.security.jwt.JwtService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
