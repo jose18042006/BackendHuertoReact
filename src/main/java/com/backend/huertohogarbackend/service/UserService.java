@@ -12,14 +12,16 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    public User register(String email, String password) {
+    public User register(String email, String password, String address, String phoneNumber) {
         User user = User.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))
+                .Address(address)
+                .phoneNumber(phoneNumber)
                 .build();
         return userRepository.save(user);
     }
     public Optional<User> findByUsername(String email) {
-        return userRepository.findByUsername(email);
+        return userRepository.findByEmail(email);
     }
 }
