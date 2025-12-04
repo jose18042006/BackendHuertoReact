@@ -1,3 +1,5 @@
+// src/main/java/com/backend/huertohogarbackend/config/CorsConfig.java
+
 package com.backend.huertohogarbackend.config;
 
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +13,8 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:5173")
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
-                .allowedHeaders("*");
-
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Añadimos OPTIONS
+                .allowedHeaders("*")
+                .allowCredentials(true); // <-- ¡ESTA ES LA LÍNEA CLAVE!
     }
 }

@@ -3,19 +3,23 @@ package com.backend.huertohogarbackend.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+@AllArgsConstructor
+@Builder
+public class Producto {
+
     @Id
     private String id;
+
     private String categoria;
     private String nombre;
-    private Double precio;
+    private double precio; // Cambiado a tipo primitivo para eficiencia
     private String unidad;
     private String descripcion;
     private String origen;
