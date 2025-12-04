@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/users")
-@PreAuthorize("hasRole('ADMIN')") // Toda la clase requiere rol ADMIN
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     @Autowired
@@ -24,7 +24,8 @@ public class AdminController {
 
     @PostMapping
     public User createUser(@RequestBody User user) {
-        return userService.register(user);
+        // CORREGIDO: Llamar al método de registro para administradores
+        return userService.registerUserByAdmin(user);
     }
 
     @PutMapping("/{id}")

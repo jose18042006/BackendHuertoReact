@@ -1,6 +1,10 @@
 package com.backend.huertohogarbackend.controller;
 
+import com.backend.huertohogarbackend.dto.RegisterRequest;
+import com.backend.huertohogarbackend.model.User;
 import com.backend.huertohogarbackend.security.jwt.JwtService;
+import com.backend.huertohogarbackend.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,27 +22,32 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserService userService;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtService jwtService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtService jwtService, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody AuthRequest authRequest) {
-        // 1. Autenticar usando el username y password
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
         );
 
-        // 2. Si la autenticación es exitosa, generar el token
         if (authentication.isAuthenticated()) {
             String token = jwtService.generateToken(authRequest.getUsername());
             return Map.of("token", token);
         }
 
-        // 3. Si no, lanzar una excepción
         throw new UsernameNotFoundException("Petición de usuario inválida");
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
+        User newUser = userService.registerClient(registerRequest);
+        return ResponseEntity.ok("Usuario '" + newUser.getUsername() + "' registrado exitosamente como cliente.");
     }
 }
 
@@ -48,16 +57,8 @@ class AuthRequest {
     private String password;
 
     // Getters y Setters
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }
