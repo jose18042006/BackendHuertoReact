@@ -51,6 +51,17 @@ public class BackendApplication {
 				System.out.println(">>> Usuario CLIENT de prueba 'clientuser' creado.");
 			}
 
+			if (userRepository.findByUsername("employeeuser").isEmpty()) {
+				User employeeUser = User.builder()
+						.username("employeeuser")
+						.email("employee@example.com")
+						.password(passwordEncoder.encode("employeepass"))
+						.role(Role.ROLE_EMPLOYEE)
+						.build();
+				userRepository.save(employeeUser);
+				System.out.println(">>> Usuario EMPLOYEE de prueba 'employeeuser' creado.");
+			}
+
 			// --- 3. CREACIÓN DE PRODUCTOS DE PRUEBA ---
 			System.out.println(">>> Verificando y creando productos de prueba...");
 

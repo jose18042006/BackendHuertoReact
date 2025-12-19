@@ -1,5 +1,3 @@
-// src/main/java/com/backend/huertohogarbackend/service/UserService.java
-
 package com.backend.huertohogarbackend.service;
 
 import com.backend.huertohogarbackend.dto.RegisterRequest;
@@ -22,30 +20,23 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // ... (métodos existentes: registerUserByAdmin, registerClient, findAll, etc.)
-
-    // --- ¡NUEVA FUNCIÓN! ---
-    // Método para que un usuario actualice su propio perfil
     public Optional<User> updateUserProfile(String currentUsername, User updatedData) {
         return userRepository.findByUsername(currentUsername)
                 .map(userToUpdate -> {
-                    // Actualizamos los campos permitidos
                     userToUpdate.setUsername(updatedData.getUsername());
                     userToUpdate.setEmail(updatedData.getEmail());
-
-                    // Solo actualizamos la contraseña si se proporciona una nueva
                     if (updatedData.getPassword() != null && !updatedData.getPassword().isEmpty()) {
                         userToUpdate.setPassword(passwordEncoder.encode(updatedData.getPassword()));
                     }
-
-                    // ¡Importante! No permitimos que el usuario cambie su propio rol.
-
                     return userRepository.save(userToUpdate);
                 });
     }
 
-    // ... (el resto de tus métodos: findByUsername, update, delete)
+    // --- MÉTODO CORREGIDO Y ROBUSTO ---
     public User registerUserByAdmin(User user) {
+        // Forzamos el ID a ser nulo para asegurar que Hibernate haga un INSERT (crear)
+        // y no un UPDATE (actualizar), solucionando el StaleObjectStateException.
+        user.setId(null);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
